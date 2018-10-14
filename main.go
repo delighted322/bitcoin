@@ -13,9 +13,9 @@ type Block struct {
 }
 
 //2.创建区块
-func NewBlock(data string) *Block { //返回的是Block的指针
+func NewBlock(data string,PrevHash []byte) *Block { //返回的是Block的指针
 	block := Block{
-		PrevHash:[]byte{}, //TODO
+		PrevHash:PrevHash,
 		Hash:[]byte{},
 		Data:[]byte(data),
 	}
@@ -39,15 +39,25 @@ type BlockChain struct {
 
 //5.创建一个区块链
 func NewBlockChain() *BlockChain  { //返回的是区块链的指针
-	genesisBlock := NewBlock("创世块") //创建创世块 并把它添加到区块链中
+	genesisBlock := NewBlock("创世块",[]byte{}) //创建创世块 并把它添加到区块链中 创世块的PrevHash是空
 	blockChain := BlockChain{blocks:[]*Block{genesisBlock}}
 	return &blockChain
 }
-//6.重构代码
+
+//6.添加区块
+func (bc *BlockChain) AddBlock(data string)  { //在区块链中添加区块
+	prevHash := bc.blocks[len(bc.blocks) - 1].Hash
+	newBlock := NewBlock(data,prevHash)
+	bc.blocks = append(bc.blocks,newBlock)
+}
+
+//7.重构代码
 
 func main()  {
-	//block := NewBlock("吱吱兔给抓抓头转了50个比特币")
 	blockChain := NewBlockChain()
+	blockChain.AddBlock("吱吱兔给抓抓头转了50个比特币")
+	blockChain.AddBlock("吱吱兔又给抓抓头转了50个比特币")
+
 
 	for i,block := range blockChain.blocks {
 		fmt.Printf("------------当前区块高度%d------------\n",i)
