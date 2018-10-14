@@ -54,12 +54,28 @@ func NewBlock(data string,PrevHash []byte) *Block { //返回的是Block的指针
 
 //3.生成哈希
 func (b *Block) SetHash() {
+	/*
 	blockInfo := append(b.PrevHash,b.Data...) //拼装区块的数据
 	blockInfo = append(blockInfo,Uint64ToByte(b.Version)...)
 	blockInfo = append(blockInfo,b.MerkelRoot...)
 	blockInfo = append(blockInfo,Uint64ToByte(b.TimeStamp)...)
 	blockInfo = append(blockInfo,Uint64ToByte(b.Difficulty)...)
 	blockInfo = append(blockInfo,Uint64ToByte(b.Nonce)...)
+	*/
+
+	tmp := [][]byte {
+		b.PrevHash,
+		b.Data,
+		Uint64ToByte(b.Version),
+		b.MerkelRoot,
+		Uint64ToByte(b.TimeStamp),
+		Uint64ToByte(b.Difficulty),
+		Uint64ToByte(b.Nonce),
+	}
+
+	var blockInfo []byte
+	blockInfo = bytes.Join(tmp,[]byte{}) //将二维的切片数组连接起来 返回一个唯一的字符切片
+
 	hash := sha256.Sum256(blockInfo) //将这个区块中所有的数据组成的信息生成哈希值
 	b.Hash = hash[:] //把数组转成切片
 }
