@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+//v2版本
+
 //7.重构代码
 func main()  {
 	blockChain := NewBlockChain()
