@@ -28,5 +28,10 @@ func NewProofOfWork(block *Block) *ProofOfWork  {
 }
 
 //3.提供不断计算hash的函数
+//(区块 + 随机数) -> 哈希值要小于目标哈希值 => 挖矿成功 生成区块
+func (pow *ProofOfWork) Run() (hash []byte, nonce uint64) {
+	//TODO
+	return []byte("helloWorld"),0
+}
 
 //4.提供一个校验函数
