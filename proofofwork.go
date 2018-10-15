@@ -1,6 +1,11 @@
 package main
 
-import "math/big"
+import (
+	"math/big"
+	"bytes"
+	"crypto/sha256"
+	"fmt"
+)
 
 //在第一个版本中 区块的哈希值是无规则的
 
@@ -29,9 +34,46 @@ func NewProofOfWork(block *Block) *ProofOfWork  {
 
 //3.提供不断计算hash的函数
 //(区块 + 随机数) -> 哈希值要小于目标哈希值 => 挖矿成功 生成区块
-func (pow *ProofOfWork) Run() (hash []byte, nonce uint64) {
-	//TODO
-	return []byte("helloWorld"),0
+func (pow *ProofOfWork) Run() ([]byte, uint64) {
+	//1. 拼装数据（区块的数据，还有不断变化的随机数）
+	b := pow.block
+	var nonce uint64  //从默认值0开始试
+	var hash [32]byte
+
+	for {
+		tmp := [][]byte {
+			b.PrevHash,
+			b.Data,
+			Uint64ToByte(b.Version),
+			b.MerkelRoot,
+			Uint64ToByte(b.TimeStamp),
+			Uint64ToByte(b.Difficulty),
+			Uint64ToByte(nonce),
+		}
+
+		var blockInfo []byte
+		blockInfo = bytes.Join(tmp,[]byte{}) //将二维的切片数组连接起来 返回一个唯一的字符切片
+
+		//2. 做哈希运算
+		hash = sha256.Sum256(blockInfo) //将这个区块中所有的数据组成的信息生成哈希值
+
+		//3. 与pow中的target进行比较
+		tmpInt :=  big.Int{}
+		tmpInt.SetBytes(hash[:]) //将hash[:]转换成big.Int{}并赋值给tmpInt
+
+		if tmpInt.Cmp(pow.target) == -1 {
+			//a. 找到了，退出返回
+			fmt.Printf("挖矿成功: hash:%x，nonce：%d\n",hash[:],nonce)
+			break
+		} else {
+			//b. 没找到，继续找，随机数加1
+			nonce++
+		}
+	}
+
+
+
+	return hash[:],nonce
 }
 
 //4.提供一个校验函数
