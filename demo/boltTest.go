@@ -3,6 +3,7 @@ package main
 import (
 	"../bolt"
 	"log"
+	"fmt"
 )
 
 func main()  {
@@ -23,8 +24,27 @@ func main()  {
 			}
 		}
 
+		//3.写数据
 		bucket.Put([]byte("11111"),[]byte("hello"))
 		bucket.Put([]byte("22222"),[]byte("world"))
+
+		return nil
+	})
+
+	//4.读数据
+	db.View(func(tx *bolt.Tx) error {
+		//找抽屉bucket 如果没有 就报错退出
+		bucket := tx.Bucket([]byte("b1"))
+		if bucket == nil {
+			log.Panic("bucket b1不应该为空 请检查")
+		}
+
+		//直接读取数据
+		v1 := bucket.Get([]byte("11111"))
+		v2 := bucket.Get([]byte("22222"))
+
+		fmt.Printf("v1:%s\n",v1)
+		fmt.Printf("v2:%s\n",v2)
 
 		return nil
 	})
