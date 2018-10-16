@@ -4,6 +4,7 @@ import (
 	"../bitcoin/bolt"
 	"log"
 	//"fmt"
+	"fmt"
 )
 
 //4.引入区块链
@@ -39,12 +40,14 @@ func NewBlockChain() *BlockChain  { //返回的是区块链的指针
 			genesisBlock := NewBlock("创世块",[]byte{}) //创建创世块 并把它添加到区块链中 创世块的PrevHash是空
 
 			//3.写数据
-			bucket.Put(genesisBlock.Hash,genesisBlock.ToByte())
+			bucket.Put(genesisBlock.Hash,genesisBlock.Serialize())
 			bucket.Put([]byte("lastHashKey"),genesisBlock.Hash)
 			lastHash = genesisBlock.Hash
 
-			//fmt.Println(bucket.Get(genesisBlock.Hash))
-			//fmt.Printf("%x",bucket.Get([]byte("lastHashKey")))
+			//这是为了读数据测试，马上删掉
+			//blockBytes := bucket.Get(genesisBlock.Hash)
+			//block := Deserialize(blockBytes)
+			//fmt.Printf("block info : %s\n", block)
 		} else {
 			lastHash = bucket.Get([]byte("lastHashKey"))
 		}

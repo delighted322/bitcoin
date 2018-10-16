@@ -5,6 +5,8 @@ import (
 	"time"
 	"bytes"
 	"encoding/binary"
+	"encoding/gob"
+	"log"
 )
 
 //1.定义结构
@@ -21,9 +23,26 @@ type Block struct {
 	Nonce uint64 //随机数 也就是挖矿要找的数据
 }
 
-func (block *Block) ToByte() []byte {
-	//TODO
-	return []byte{}
+//序列化
+func (block *Block) Serialize() []byte {
+	var buffer bytes.Buffer
+	encoder := gob.NewEncoder(&buffer)
+	err := encoder.Encode(&block)
+	if err != nil {
+		log.Panic("编码出错")
+	}
+	return buffer.Bytes()
+}
+
+//反序列化
+func Deserialize(data []byte) Block  {
+	var block Block
+	decoder := gob.NewDecoder(bytes.NewReader(data))
+	err := decoder.Decode(&block)
+	if err != nil {
+		log.Panic("解码出错!")
+	}
+	return block
 }
 
 //将uint64类型转换成byte类型
