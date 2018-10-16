@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	//"fmt"
 )
 
 //v2版本
@@ -12,7 +12,7 @@ func main()  {
 	blockChain.AddBlock("吱吱兔给抓抓头转了50个比特币")
 	blockChain.AddBlock("吱吱兔又给抓抓头转了50个比特币")
 
-
+/*
 	for i,block := range blockChain.blocks {
 		fmt.Printf("------------当前区块高度%d------------\n",i)
 		fmt.Printf("前区块哈希值:%x\n",block.PrevHash)
@@ -24,4 +24,5 @@ func main()  {
 		fmt.Printf("难度值：%b\n",block.Difficulty)
 		fmt.Printf("随机数：%d\n",block.Nonce)
 	}
+*/
 }

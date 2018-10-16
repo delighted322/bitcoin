@@ -21,6 +21,11 @@ type Block struct {
 	Nonce uint64 //随机数 也就是挖矿要找的数据
 }
 
+func (block *Block) ToByte() []byte {
+	//TODO
+	return []byte{}
+}
+
 //将uint64类型转换成byte类型
 func Uint64ToByte(num uint64) []byte { //TODO 不懂
 	var buffer bytes.Buffer
