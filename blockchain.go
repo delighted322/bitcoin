@@ -3,8 +3,6 @@ package main
 import (
 	"../bitcoin/bolt"
 	"log"
-	//"fmt"
-	"fmt"
 )
 
 //4.引入区块链
@@ -62,4 +60,25 @@ func (bc *BlockChain) AddBlock(data string)  { //在区块链中添加区块
 	//prevHash := bc.len(bc.blocks) - 1].Hash
 	//newBlock := NewBlock(data,prevHash)
 	//bc.blocks = append(bc.blocks,newBlock)
+
+	db := bc.db
+	lastHash := bc.tail
+
+	db.Update(func(tx *bolt.Tx) error {
+		//找抽屉bucket 如果没有 就创建
+		bucket := tx.Bucket([]byte(blockBucket))
+		if bucket == nil {
+			panic("bucket 不应该为空 请检查")
+		}
+
+		block := NewBlock(data,lastHash)
+
+		//3.写数据
+		bucket.Put(block.Hash,block.Serialize())
+		bucket.Put([]byte("lastHashKey"),block.Hash)
+
+		bc.tail = block.Hash  //一定要记得更新内存中的tail
+
+		return nil
+	})
 }
