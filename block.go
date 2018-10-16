@@ -47,7 +47,12 @@ func NewBlock(data string,PrevHash []byte) *Block { //返回的是Block的指针
 		Nonce:0, //随便填写的无效数据
 	}
 
-	block.SetHash() //生成当前区块的哈希 用指针才能成功修改Hash的值
+	//block.SetHash() //生成当前区块的哈希 用指针才能成功修改Hash的值
+	pow := NewProofOfWork(&block)
+	hash,nonce := pow.Run() //在Run()中不断进行哈希运算 直到找到一个随机数 使得生成的哈希值小于目标哈希值 则返回当前哈希 以及这个随机数
+
+	block.Hash = hash
+	block.Nonce = nonce
 
 	return &block
 }

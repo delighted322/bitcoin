@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+//v2版本
+
 //7.重构代码
 func main()  {
 	blockChain := NewBlockChain()
@@ -20,6 +22,6 @@ func main()  {
 		fmt.Printf("Merkel根：%s\n",block.MerkelRoot)
 		fmt.Printf("时间戳：%b\n",block.TimeStamp)
 		fmt.Printf("难度值：%b\n",block.Difficulty)
-		fmt.Printf("随机数：%b\n",block.Nonce)
+		fmt.Printf("随机数：%d\n",block.Nonce)
 	}
 }
