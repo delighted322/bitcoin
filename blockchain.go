@@ -82,3 +82,7 @@ func (bc *BlockChain) AddBlock(data string)  { //在区块链中添加区块
 		return nil
 	})
 }
+
+func (bc *BlockChain) PrintChain()  {  //TODO 使用bolt.ForEach遍历区块链
+	
+}
