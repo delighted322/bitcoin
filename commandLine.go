@@ -30,3 +30,15 @@ func (cli *CLI) PrintBlockChain()  { //TODO
 		}
 	}
 }
+
+//获取指定地址的余额
+func (cli *CLI) GetBalance(address string)  {
+	utxos := cli.bc.FindUTOs(address)
+
+	total := 0.0
+	for _,utxo := range utxos {
+		total += utxo.value
+	}
+
+	fmt.Printf("\"%s\"的余额为：%f\n", address, total)
+}

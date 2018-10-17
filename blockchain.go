@@ -121,3 +121,10 @@ func (bc *BlockChain) PrintChain()  {  //TODO 使用bolt.ForEach遍历区块链 
 	})
 }
 
+//找到指定地址的所有utxo
+func (bc *BlockChain) FindUTOs(address string) []TXOutput  {
+	var UTXO []TXOutput
+	//
+
+	return UTXO
+}
