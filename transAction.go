@@ -65,6 +65,21 @@ func NewCoinbaseTX(address string,data string) *TransAction{ //address模拟锁�
 	return &tx
 }
 
+//实现一个函数 判断当前的交易是否为挖矿交易
+func (tx *TransAction) IsCoinbase() bool {
+	//交易input只有一个
+	if len(tx.TXInputs) == 1 {
+		input := tx.TXInputs[0]
+		//交易id为空
+		//交易的inde为-1
+		if bytes.Equal(input.TXid,[]byte{}) && input.Index == -1 {
+			return true
+		}
+	}
+
+	return false
+}
+
 //3.创建挖矿交易
 
 //4.根据交易调整程序
