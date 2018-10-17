@@ -27,7 +27,7 @@ type TXInput struct {
 
 type TXOutput struct {
 	//转账金额
-	value float64
+	Value float64 //要大写
 	//锁定脚本(对方公钥的哈希 这个哈希可以通过地址反推出来 所以转账时知道地址即可) 这里用地址模拟
 	PubKeyHash string
 }
