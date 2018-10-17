@@ -1,5 +1,12 @@
 package main
 
+import (
+	"bytes"
+	"encoding/gob"
+	"log"
+	"crypto/sha256"
+)
+
 //1.定义交易结构
 type TransAction struct {
 	TXID []byte //交易ID 一般是交易结构的哈希值
@@ -22,6 +29,22 @@ type TXOutput struct {
 	//锁定脚本(对方公钥的哈希 这个哈希可以通过地址反推出来 所以转账时知道地址即可) 这里用地址模拟
 	PubKeyHash string
 }
+
+//设置交易ID
+func (tx *TransAction) SetHash() {
+	var buffer bytes.Buffer
+
+	encoder := gob.NewEncoder(&buffer)
+	err := encoder.Encode(tx)
+	if err != nil {
+		log.Panic(err,"编码出错")
+	}
+
+	data := buffer.Bytes()
+	hash := sha256.Sum256(data)
+	tx.TXID = hash[:]
+}
+
 
 //2.提供创建交易方法
 
