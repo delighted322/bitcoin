@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func (cli *CLI) AddBlock(data string)  {
-	cli.bc.AddBlock(data)
+	//cli.bc.AddBlock(data) //TODO
 	fmt.Println("添加区块成功")
 }
 
@@ -17,7 +17,7 @@ func (cli *CLI) PrintBlockChain()  { //TODO
 		fmt.Println("--------------------")
 		fmt.Printf("前区块哈希值:%x\n",block.PrevHash)
 		fmt.Printf("当前哈希值:%x\n",block.Hash)
-		fmt.Printf("区块数据:%s\n",block.Data)
+		fmt.Printf("区块数据:%s\n",block.Transactions[0].TXInputs[0].Sig)
 		fmt.Printf("版本号：%b\n",block.Version)
 		fmt.Printf("Merkel根：%s\n",block.MerkelRoot)
 		fmt.Printf("时间戳：%b\n",block.TimeStamp)

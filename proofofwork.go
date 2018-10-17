@@ -43,7 +43,7 @@ func (pow *ProofOfWork) Run() ([]byte, uint64) {
 	for {
 		tmp := [][]byte {
 			b.PrevHash,
-			b.Data,
+			//b.Data, //只对区块头做哈希值 区块体通过MerkelRoot产生影响
 			Uint64ToByte(b.Version),
 			b.MerkelRoot,
 			Uint64ToByte(b.TimeStamp),

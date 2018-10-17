@@ -1,7 +1,7 @@
 package main
 
 import (
-	"crypto/sha256"
+	//"crypto/sha256"
 	"time"
 	"bytes"
 	"encoding/binary"
@@ -13,7 +13,8 @@ import (
 type Block struct {
 	PrevHash []byte //前区块哈希
 	Hash []byte //当前区块哈希 实际的区块中是没有存储当前区块哈希的
-	Data []byte //交易数据
+	//Data []byte //交易数据
+	Transactions []*TransAction //真实的交易数据 一个区块里可能有多个交易
 
 //补充完成区块的结构
 	Version uint64 //版本号
@@ -58,18 +59,21 @@ func Uint64ToByte(num uint64) []byte { //TODO 不懂
 }
 
 //2.创建区块
-func NewBlock(data string,PrevHash []byte) *Block { //返回的是Block的指针
+func NewBlock(txs []*TransAction,PrevHash []byte) *Block { //返回的是Block的指针
 	block := Block{
 		PrevHash:PrevHash,
 		Hash:[]byte{},
-		Data:[]byte(data),
+		//Data:[]byte(data),
+		Transactions:txs,
 
 		Version:00,
-		MerkelRoot:[]byte{}, //TODO
+		//MerkelRoot:[]byte{},
 		TimeStamp:uint64(time.Now().Unix()),
 		Difficulty:0, //随便填写的无效数据
 		Nonce:0, //随便填写的无效数据
 	}
+
+	block.MerkelRoot = block.MakeMerkelRoot()
 
 	//block.SetHash() //生成当前区块的哈希 用指针才能成功修改Hash的值
 	pow := NewProofOfWork(&block)
@@ -79,6 +83,12 @@ func NewBlock(data string,PrevHash []byte) *Block { //返回的是Block的指针
 	block.Nonce = nonce
 
 	return &block
+}
+
+//模拟梅克尔根 只是对交易的数据进行简单的拼接 而不做二叉树处理
+func (b *Block) MakeMerkelRoot() []byte{
+	//TODO
+	return []byte{}
 }
 
 //3.生成哈希
@@ -91,20 +101,20 @@ func (b *Block) SetHash() {
 	blockInfo = append(blockInfo,Uint64ToByte(b.Difficulty)...)
 	blockInfo = append(blockInfo,Uint64ToByte(b.Nonce)...)
 	*/
-
-	tmp := [][]byte {
-		b.PrevHash,
-		b.Data,
-		Uint64ToByte(b.Version),
-		b.MerkelRoot,
-		Uint64ToByte(b.TimeStamp),
-		Uint64ToByte(b.Difficulty),
-		Uint64ToByte(b.Nonce),
-	}
-
-	var blockInfo []byte
-	blockInfo = bytes.Join(tmp,[]byte{}) //将二维的切片数组连接起来 返回一个唯一的字符切片
-
-	hash := sha256.Sum256(blockInfo) //将这个区块中所有的数据组成的信息生成哈希值
-	b.Hash = hash[:] //把数组转成切片
+	//
+	//tmp := [][]byte {
+	//	b.PrevHash,
+	//	b.Data,
+	//	Uint64ToByte(b.Version),
+	//	b.MerkelRoot,
+	//	Uint64ToByte(b.TimeStamp),
+	//	Uint64ToByte(b.Difficulty),
+	//	Uint64ToByte(b.Nonce),
+	//}
+	//
+	//var blockInfo []byte
+	//blockInfo = bytes.Join(tmp,[]byte{}) //将二维的切片数组连接起来 返回一个唯一的字符切片
+	//
+	//hash := sha256.Sum256(blockInfo) //将这个区块中所有的数据组成的信息生成哈希值
+	//b.Hash = hash[:] //把数组转成切片
 }

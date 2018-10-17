@@ -49,7 +49,7 @@ func (tx *TransAction) SetHash() {
 
 
 //2.提供创建交易的方法(挖矿交易)
-func NewCoinbaseTX(address string,data string) *TransAction{ //address模拟解锁脚本 data是由矿工填写的sig字段
+func NewCoinbaseTX(address string,data string) *TransAction{ //address模拟锁定脚本 data是由矿工填写的sig字段
 	//挖矿交易的特点
 	//1.只有一个输入交易
 	//2.无需引用交易id
