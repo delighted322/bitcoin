@@ -33,7 +33,7 @@ func (cli *CLI) PrintBlockChain()  { //TODO
 
 //获取指定地址的余额
 func (cli *CLI) GetBalance(address string)  {
-	utxos := cli.bc.FindUTOs(address)
+	utxos := cli.bc.FindUTXOs(address)
 
 	total := 0.0
 	for _,utxo := range utxos {
