@@ -196,6 +196,88 @@ func (bc *BlockChain) FindNeedUTXOs(from string,amount float64) (map[string][]ui
 	//找到的utxos里面包含的钱的总数
 	var calc float64
 
-	//TODO
+	//定义一个map来保存消费过的output key是这个output的交易id value是这个交易中索引的数组
+	//map[交易id]int64
+	spentOutputs := make(map[string][]int64)
+
+	//创建迭代器
+	it := bc.NewBlockchainIterator()
+
+	for {
+		//遍历区块
+		block := it.Next()
+
+		//遍历交易
+		for _,tx := range block.Transactions {
+			fmt.Printf("current txid: %s\n",tx.TXID)
+
+		OUTPUT:
+		//遍历output 找到和自己相关的utxo(在添加output之前检查一下是否已经消耗过)
+			for i,output := range tx.TXOutputs {
+				fmt.Printf("current index : %d\n",i)
+
+				//在这里做一个过滤 将所有消耗过的output和当前的所即将添加的output对比一下
+				//如果相同 则跳过 否则添加
+				//如果当前的交易id存在于我们已经表示的map 那么说明这个交易里有消耗过的output
+				//这个交易里面有我们消耗过的output 我们要定位它 然后过滤掉
+				if spentOutputs[string(tx.TXID)] != nil {
+					for _,j := range spentOutputs[string(tx.TXID)] {
+						if int64(i) == j {
+							//当前准备添加的output已经消耗过了 不要再加了
+							continue OUTPUT
+						}
+					}
+				}
+
+				//这个output和我们目标的地址相同 满足条件 加到返回UTXO数组中
+				if output.PubKeyHash == from {
+					//我们要实现的逻辑在这里 找到自己需要的最少的utxo
+					//比较一下是否满足转账需求
+						//满足的话 直接返回utxo calc
+						//不满足继续统计
+					if calc < amount {
+						//把utxo加进来
+						utxos[string(tx.TXID)] = append(utxos[string(tx.TXID)],uint64(i))
+						//统计一下当前utxo的总额
+						calc += output.Value
+
+						//如果加完之后满足条件
+						if calc >= amount {
+							fmt.Printf("找到了满足的金额:%f\n",calc)
+							return utxos,calc
+						} else {
+							fmt.Printf("不满足转账金额 当前总额%f, 目标金额%f\n",calc,amount)
+						}
+					} else {
+						return  utxos,calc
+					}
+				}
+			}
+
+			//如果当前交易是挖矿交易的话 那么不做遍历 直接跳过
+
+			if !tx.IsCoinbase() {
+				//遍历input 找到自己花费过的utxo的集合(把自己消耗过的标示出来)
+				for _,input := range tx.TXInputs {
+					//判断一下当前这个input和目标(李四)是否一致 如果相同 说明这个是李四消耗过的output 就加进来
+					if input.Sig == from {
+						//indexArray := spentOutputs[string(input.TXid)]
+						//indexArray = append(indexArray,input.Index)
+						spentOutputs[string(input.TXid)] = append(spentOutputs[string(input.TXid)],input.Index)
+					}
+				}
+			} else {
+				fmt.Println("这是coinbase 不做input遍历")
+			}
+
+
+		}
+
+		if len(block.PrevHash) == 0 {
+			break
+			fmt.Printf("区块遍历完成 退出")
+		}
+	}
+
 	return utxos,calc
 }
