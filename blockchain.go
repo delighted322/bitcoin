@@ -137,12 +137,12 @@ func (bc *BlockChain) FindUTOs(address string) []TXOutput  {
 
 		//遍历交易
 		for _,tx := range block.Transactions {
-			fmt.Printf("current txid: %s\n",tx.TXID)
+			//fmt.Printf("current txid: %s\n",tx.TXID)
 
 			OUTPUT:
 			//遍历output 找到和自己相关的utxo(在添加output之前检查一下是否已经消耗过)
 			for i,output := range tx.TXOutputs {
-				fmt.Printf("current index : %d\n",i)
+				//fmt.Printf("current index : %d\n",i)
 
 				//在这里做一个过滤 将所有消耗过的output和当前的所即将添加的output对比一下
 				//如果相同 则跳过 否则添加
@@ -175,7 +175,7 @@ func (bc *BlockChain) FindUTOs(address string) []TXOutput  {
 					}
 				}
 			} else {
-				fmt.Println("这是coinbase 不做input遍历")
+				//fmt.Println("这是coinbase 不做input遍历")
 			}
 
 
@@ -193,7 +193,8 @@ func (bc *BlockChain) FindUTOs(address string) []TXOutput  {
 //根据需求找到合理的utxo
 func (bc *BlockChain) FindNeedUTXOs(from string,amount float64) (map[string][]uint64,float64)  {
 	//找到合理的utxos集合
-	var utxos map[string][]uint64
+	utxos := make(map[string][]uint64)
+
 	//找到的utxos里面包含的钱的总数
 	var calc float64
 
@@ -210,12 +211,12 @@ func (bc *BlockChain) FindNeedUTXOs(from string,amount float64) (map[string][]ui
 
 		//遍历交易
 		for _,tx := range block.Transactions {
-			fmt.Printf("current txid: %s\n",tx.TXID)
+			//fmt.Printf("current txid: %s\n",tx.TXID)
 
 		OUTPUT:
 		//遍历output 找到和自己相关的utxo(在添加output之前检查一下是否已经消耗过)
 			for i,output := range tx.TXOutputs {
-				fmt.Printf("current index : %d\n",i)
+				//fmt.Printf("current index : %d\n",i)
 
 				//在这里做一个过滤 将所有消耗过的output和当前的所即将添加的output对比一下
 				//如果相同 则跳过 否则添加
@@ -268,7 +269,7 @@ func (bc *BlockChain) FindNeedUTXOs(from string,amount float64) (map[string][]ui
 					}
 				}
 			} else {
-				fmt.Println("这是coinbase 不做input遍历")
+				//fmt.Println("这是coinbase 不做input遍历")
 			}
 
 

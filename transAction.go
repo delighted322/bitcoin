@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-const reward  = 12.5 //每次挖矿成功得到的奖励
+const reward  = 50 //每次挖矿成功得到的奖励
 
 //1.定义交易结构
 type TransAction struct {

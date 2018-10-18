@@ -56,7 +56,7 @@ func (cli *CLI) Run()  { //为什么不直接blockChain.Run*()呢 //TODO
 		fmt.Println("打印区块")
 		cli.PrintBlockChain()
 	case "getBalance":
-		fmt.Printf("获取余额\n")
+		//fmt.Printf("获取余额\n")
 		if len(args) == 4 && args[2] == "--address" {
 			address := args[3]
 			cli.GetBalance(address)
