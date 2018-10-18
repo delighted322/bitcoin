@@ -17,6 +17,7 @@ const Usage  = `
 	printChainR              "反向打印区块链"
 	getBalance --address ADDRESS "获取指定地址的余额"
 	send FROM TO AMOUNT MINER DATA "由FROM转AMOUNT给TO，由MINER挖矿，同时写入DATA"
+	newWallet   "创建一个新的钱包(私钥公钥对)"
 `
 
 func (cli *CLI) Run()  { //为什么不直接blockChain.Run*()呢 //TODO
@@ -35,7 +36,6 @@ func (cli *CLI) Run()  { //为什么不直接blockChain.Run*()呢 //TODO
 			fmt.Printf(Usage)
 			return
 		}
-
 		//send FROM TO AMOUNT MINER DATA "由FROM转AMOUNT给TO，由MINER挖矿，同时写入DATA"
 		from := args[2]
 		to := args[3]
@@ -52,6 +52,10 @@ func (cli *CLI) Run()  { //为什么不直接blockChain.Run*()呢 //TODO
 			address := args[3]
 			cli.GetBalance(address)
 		}
+	case "newWallet":
+		fmt.Println("创建新的钱包...")
+		cli.NewWallet()
+
 	default:
 		fmt.Println("无效的命令")
 		fmt.Println(Usage)
