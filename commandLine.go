@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 func (cli *CLI) AddBlock(data string)  {
 	//cli.bc.AddBlock(data) //TODO
@@ -19,8 +22,9 @@ func (cli *CLI) PrintBlockChain()  { //TODO
 		fmt.Printf("当前哈希值:%x\n",block.Hash)
 		fmt.Printf("区块数据:%s\n",block.Transactions[0].TXInputs[0].Sig)
 		fmt.Printf("版本号：%b\n",block.Version)
-		fmt.Printf("Merkel根：%s\n",block.MerkelRoot)
-		fmt.Printf("时间戳：%b\n",block.TimeStamp)
+		timeForamt := time.Unix(int64(block.TimeStamp),0).Format("2006-01-02 15:04:05")
+		fmt.Printf("时间戳：%s\n",timeForamt)
+		fmt.Printf("Merkel根：%x\n",block.MerkelRoot)  //%x
 		fmt.Printf("难度值：%b\n",block.Difficulty)
 		fmt.Printf("随机数：%d\n",block.Nonce)
 

@@ -28,15 +28,6 @@ func (cli *CLI) Run()  { //为什么不直接blockChain.Run*()呢 //TODO
 
 	cmd := args[1]
 	switch cmd {
-	case "addBlock":
-		fmt.Println("添加区块")
-		if len(args) == 4 && args[2] == "--data" {
-			data := args[3]
-			cli.AddBlock(data)
-		} else {
-			fmt.Printf("添加区块参数使用不当，请检查")
-			fmt.Printf(Usage)
-		}
 	case "send":
 		fmt.Println("转账开始....")
 		if len(args) != 7 {
