@@ -77,7 +77,9 @@ func (cli *CLI) NewWallet()  {
 	//fmt.Printf("地址：%s\n", address)
 
 	ws := NewWallets()
-	for address := range ws.WalletsMap {
-		fmt.Printf("地址：%s\n",address)
-	}
+	address := ws.CreateWallet()
+	fmt.Printf("地址：%s\n",address)
+	//for address := range ws.WalletsMap {
+	//	fmt.Printf("地址：%s\n",address)
+	//}
 }
