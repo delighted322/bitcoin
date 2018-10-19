@@ -83,3 +83,11 @@ func (cli *CLI) NewWallet()  {
 	//	fmt.Printf("地址：%s\n",address)
 	//}
 }
+
+func (cli *CLI) ListAddresses()  {
+	ws := NewWallets()
+	addresses := ws.ListAllAddresses()
+	for _,address := range addresses {
+		fmt.Printf("地址：%s\n",address)
+	}
+}
