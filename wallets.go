@@ -22,7 +22,33 @@ func NewWallets() *Wallets  {
 	wallets.WalletsMap = make(map[string]*Wallet)
 	//wallets.WalletsMap[address] = wallet
 
+	wallets.loadFile()
+
 	return &wallets
+}
+
+//读取文件 把所有的wallet读出来
+func (ws *Wallets) loadFile()  {
+	//读取内容
+	content,err := ioutil.ReadFile("wallet.dat")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	//解码
+	//panic: gob: type not registered for interface: elliptic.p256Curve
+	gob.Register(elliptic.P256()) //记得先注册一下
+
+	decoder := gob.NewDecoder(bytes.NewReader(content))
+
+	var wsLocal Wallets
+
+	err = decoder.Decode(&wsLocal)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	ws.WalletsMap = wsLocal.WalletsMap //对于结构来说 里面有map的 要指定赋值 不要在最外层直接赋值 ws = &wsLocal 这样不行
 }
 
 func (ws *Wallets) CreateWallet() string  {
