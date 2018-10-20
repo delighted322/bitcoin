@@ -6,6 +6,7 @@ import (
 	"log"
 	"crypto/sha256"
 	"fmt"
+	"crypto/ecdsa"
 )
 
 const reward  = 50 //每次挖矿成功得到的奖励
@@ -131,7 +132,7 @@ func NewTransaction(from, to string, amount float64, bc *BlockChain) *TransActio
 
 	//3.得到对应的公钥 私钥
 	pubkey := wallet.PubKey
-	//privateKey := wallet.Private //稍后再用
+	privateKey := wallet.Private //稍后再用
 
 	//传递公钥的哈希 而不是传递地址
 	pubKeyHash := HashPubkey(pubkey)
@@ -170,7 +171,27 @@ func NewTransaction(from, to string, amount float64, bc *BlockChain) *TransActio
 
 	tx := TransAction{[]byte{},inputs,outputs}
 	tx.SetHash()
+
+	//签名 交易创建的最后进行签名
+	prevTXs := make(map[string]TransAction)
+
+	tx.Sign(*privateKey,prevTXs)
+
 	return  &tx
 }
+
+//签名的具体实现,
+// 参数为：私钥，inputs里面所有引用的交易的结构map[string]Transaction
+//map[2222]Transaction222
+//map[3333]Transaction333
+func (tx *TransAction ) Sign(privateKey ecdsa.PrivateKey,prevTXs map[string]TransAction)  {
+	//具体签名的动作先不管 稍后继续
+
+	//TODO
+
+
+
+}
+
 
 //4.根据交易调整程序
