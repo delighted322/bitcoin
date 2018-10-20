@@ -89,11 +89,14 @@ func NewCoinbaseTX(address string,data string) *TransAction{ //address模拟锁�
 	//2.无需引用交易id
 	//3.无需引用index
 	//矿工由于挖矿时无需指定签名 所以这个sig字段可以由矿工自由填写数据 一般是填写矿池的名字
-	input := TXInput{[]byte{},-1,data}
-	output := TXOutput{reward,address}
+	input := TXInput{[]byte{},-1,nil,[]byte(data)}
+	//output := TXOutput{reward,address}
+
+	//新的创建方法
+	output := NewTxOutput(reward,address)
 
 	//对于挖矿交易来说 只有一个input和一个output
-	tx := TransAction{TXID:[]byte{},TXInputs:[]TXInput{input},TXOutputs:[]TXOutput{output}}
+	tx := TransAction{TXID:[]byte{},TXInputs:[]TXInput{input},TXOutputs:[]TXOutput{*output}}
 	tx.SetHash() //生成交易的ID
 
 	return &tx
@@ -120,8 +123,25 @@ func (tx *TransAction) IsCoinbase() bool {
 
 //如果有零钱 要找零
 func NewTransaction(from, to string, amount float64, bc *BlockChain) *TransAction  {
+
+	//1.创建交易之后要进行数字签名 所以需要私钥 -> 打开钱包NewWallets()
+	ws := NewWallets()
+
+	//2.找到自己的钱包 根据地址返回自己的wallet
+	wallet := ws.WalletsMap[from]
+	if wallet == nil {
+		fmt.Println("没有找到改地址的钱包 交易创建失败")
+		return nil
+	}
+
+	//3.得到对应的公钥 私钥
+	pubkey := wallet.PubKey
+	//privateKey := wallet.Private //稍后再用
+
+	pubKeyHash := HashPubkey(pubkey)
+
 	//找到最合理的UTXO集合 map[string][]uint64
-	utxos,resValue := bc.FindNeedUTXOs(from,amount)
+	utxos,resValue := bc.FindNeedUTXOs(pubKeyHash,amount)
 
 	if resValue < amount {
 		fmt.Println("余额不足 交易失败")
@@ -134,18 +154,22 @@ func NewTransaction(from, to string, amount float64, bc *BlockChain) *TransActio
 	//创建交替输入 将这些utxo逐一转成inputs
 	for id, indexArray := range utxos {
 		for _,i := range indexArray {
-			input := TXInput{[]byte(id),int64(i),from}
+			input := TXInput{[]byte(id),int64(i),nil,pubkey}
 			inputs = append(inputs,input)
 		}
 	}
 
 	//创建交易输出
-	output := TXOutput{amount,to}
-	outputs = append(outputs,output)
+	//output := TXOutput{amount,to}
+	//outputs = append(outputs,output)
+	output := NewTxOutput(amount,to)
+	outputs = append(outputs,*output)
 
 	//找零
 	if resValue > amount {
-		outputs = append(outputs,TXOutput{resValue-amount,from})
+		output = NewTxOutput(resValue-amount,from)
+		outputs = append(outputs,*output)
+		//outputs = append(outputs,TXOutput{resValue-amount,from})
 	}
 
 	tx := TransAction{[]byte{},inputs,outputs}
