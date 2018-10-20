@@ -6,7 +6,6 @@ import (
 	"log"
 	"crypto/sha256"
 	"fmt"
-	"github.com/btcsuite/btcutil/base58"
 )
 
 const reward  = 50 //每次挖矿成功得到的奖励
@@ -48,13 +47,9 @@ type TXOutput struct {
 func (output *TXOutput) Lock(address string)  {
 	//1.解码
 	//2.截取出公钥哈希 去除version(1字节)去除校验码(4字节)
-	addressByte := base58.Decode(address) //25字节
-	len := len(addressByte)
-
-	pubKeyHash := addressByte[1:(len-4)]
 
 	//真正的锁定动作
-	output.PubKeyHash = pubKeyHash
+	output.PubKeyHash =GetPubKeyFromAddress(address)
 }
 
 func NewTxOutput(value float64,address string) *TXOutput  {

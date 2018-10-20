@@ -8,7 +8,7 @@ import (
 
 //7.重构代码
 func main()  {
-	blockChain := NewBlockChain("张三")  //张三为挖矿人
+	blockChain := NewBlockChain("14YymXJsSGZDe1Xt3Umyc4wcGFeNT1ZJD4")  //张三为挖矿人
 	cli := CLI{blockChain}
 	cli.Run()
 
