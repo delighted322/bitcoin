@@ -6,6 +6,7 @@ import (
 	"log"
 	"crypto/sha256"
 	"fmt"
+	"github.com/btcsuite/btcutil/base58"
 )
 
 const reward  = 50 //每次挖矿成功得到的奖励
@@ -23,15 +24,47 @@ type TXInput struct {
 	//所消费utxo在output中的索引
 	Index int64
 	//解锁脚本(签名 公钥) 我们用地址来模拟
-	Sig string
+	//Sig string
+
+	//真正的数字签名 由r s拼成的[]byte
+	Signature []byte
+
+	//约定 这里的PubKey不存储原始的公钥 而是存储X和Y拼接的字符串 在校验端重新拆分 (参考r s传递)
+	PubKey []byte
 }
 
 type TXOutput struct {
 	//转账金额
 	Value float64 //要大写
 	//锁定脚本(对方公钥的哈希 这个哈希可以通过地址反推出来 所以转账时知道地址即可) 这里用地址模拟
-	PubKeyHash string
+	//PubKeyHash string
+
+	//收款方的公钥的哈希 注意 是哈希而不是公钥 也不是地址
+	PubKeyHash []byte
 }
+
+//由于现在存储的字段是地址的公钥哈希 所以无法直接创建TXOutput
+//为了能够得到公钥哈希 我们需要处理一下 写一个Lock函数
+func (output *TXOutput) Lock(address string)  {
+	//1.解码
+	//2.截取出公钥哈希 去除version(1字节)去除校验码(4字节)
+	addressByte := base58.Decode(address) //25字节
+	len := len(addressByte)
+
+	pubKeyHash := addressByte[1:(len-4)]
+
+	//真正的锁定动作
+	output.PubKeyHash = pubKeyHash
+}
+
+func NewTxOutput(value float64,address string) *TXOutput  {
+	output := TXOutput{
+		Value:value,
+	}
+	output.Lock(address)
+	return &output
+}
+
 
 //设置交易ID
 func (tx *TransAction) SetHash() {

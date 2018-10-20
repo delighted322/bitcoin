@@ -17,6 +17,7 @@ type Wallets struct {
 	WalletsMap map[string]*Wallet
 }
 
+//创建方法 返回当前所有钱包的实例
 func NewWallets() *Wallets  {
 	//wallet := NewWallet()
 	//address := wallet.NewAddress()
