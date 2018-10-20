@@ -40,6 +40,11 @@ func (cli *CLI) GetBalance(address string)  {
 	//1.校验地址 稍后再做
 	//TODO
 	//2.生成公钥哈希
+	//1.校验地址 稍后再做
+	if !IsValidAddress(address) {
+		fmt.Printf("地址无效：%s\n",address)
+		return
+	}
 	pubKeyHash := GetPubKeyFromAddress(address)
 
 	utxos := cli.bc.FindUTXOs(pubKeyHash)
